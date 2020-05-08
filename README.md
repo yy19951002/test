@@ -6,9 +6,13 @@
 
 # cas
 单点登录和退出
+cas-client获取ticket，实现重定向
 
 # demo
 简单springBoot搭建
 
 # get_swaggerpdf
 swagger服务通过指定url导出pdf和html
+
+# springboot-login-master
+springBoot简单用户注册登录实例
