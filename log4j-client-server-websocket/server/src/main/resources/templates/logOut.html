@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>日志</title>
+</head>
+<body>
+<h1 style="text-align: center;">实时日志</h1>
+
+<div id="log-container" contenteditable="true" class="content"
+style="width: 100%;height: 500px;background-color: ghostwhite;overflow: auto;">
+</div>
+<div>
+    <!-- 下面div用的是miniui的样式，其他的稍微改变一下即可-->
+    <button style="left: 30px;top: 1px" onclick="clearContext()">清屏</button>
+</div>
+<script>
+    var ws = new WebSocket("ws://127.0.0.1:8080/log");
+
+    ws.onopen = function() {
+        ws.send("Hello WebSockets!");
+    };
+
+    ws.onmessage = function(evt) {
+        var content = document.getElementsByClassName('content')[0];
+        console.log(evt.data);
+        content.innerHTML += evt.data;
+    };
+    //关闭连接
+    ws.onclose = function() {
+        ws.close();
+    };
+    // 清屏日志
+    function clearContext() {
+        var content = document.getElementsByClassName('content')[0];
+        content.innerHTML = null;
+    }
+</script>
+</body>
+</html>
