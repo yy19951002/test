@@ -3,16 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>日志</title>
+    <style>
+        .hightLight {
+            color: #ff0000;
+        }
+        .content{
+            background-color: #454545;
+            padding: 10px;
+            white-space: pre-wrap;
+            color: #27aa5e;
+            width: 50%;
+            height: 500px;
+            overflow: auto;
+            margin: auto;
+        }
+    </style>
 </head>
 <body>
 <h1 style="text-align: center;">实时日志</h1>
 
-<div id="log-container" contenteditable="true" class="content"
-style="width: 100%;height: 500px;background-color: ghostwhite;overflow: auto;">
+<div id="log-container" contenteditable="true" class="content">
 </div>
 <div>
     <!-- 下面div用的是miniui的样式，其他的稍微改变一下即可-->
-    <button style="left: 30px;top: 1px" onclick="clearContext()">清屏</button>
+    <button style="margin:10px auto;display: block" onclick="clearContext()">清屏</button>
 </div>
 <script>
     var ws = new WebSocket("ws://127.0.0.1:8080/log");
@@ -23,8 +37,13 @@ style="width: 100%;height: 500px;background-color: ghostwhite;overflow: auto;">
 
     ws.onmessage = function(evt) {
         var content = document.getElementsByClassName('content')[0];
+        var pTag = document.createElement("p");
+        if(evt.data.indexOf("ERROR") != -1){
+            pTag.setAttribute('class', 'hightLight')
+        }
+        pTag.innerHTML = evt.data;
         console.log(evt.data);
-        content.innerHTML += evt.data;
+        content.appendChild(pTag);
     };
     //关闭连接
     ws.onclose = function() {
