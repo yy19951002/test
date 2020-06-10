@@ -7,26 +7,42 @@
         .hightLight {
             color: #ff0000;
         }
-        .content{
-            background-color: #454545;
+        .logContent{
+            width: 50%;
+            height: 550px;
+            padding: 10px;
+            line-height: 1.5;
+            color: #0aa908;
+            background-color: rgba(0,0,0,0.8);
+            margin: 0 auto;
+            overflow: auto;
+        }
+        .log-show-dom{
             padding: 10px;
             white-space: pre-wrap;
             color: #27aa5e;
-            width: 50%;
-            height: 500px;
+        }
+
+        .log-operate{
+            width: 300px;
+            height: 50px;
             overflow: auto;
-            margin: auto;
+            margin: 0 auto;
+            display: block;
         }
     </style>
 </head>
 <body>
 <h1 style="text-align: center;">实时日志</h1>
 
-<div id="log-container" contenteditable="true" class="content">
+<div class="logContent" id="outDiv">日志记录：
+    <div class="log-show-dom" id="innerDiv"></div>
 </div>
-<div>
-    <!-- 下面div用的是miniui的样式，其他的稍微改变一下即可-->
-    <button style="margin:10px auto;display: block" onclick="clearContext()">清屏</button>
+<div class="log-operate">
+    <button onclick="move2Top()">回到顶部</button>
+    <button onclick="move2Buttom()">回到底部</button>
+    <button onclick="clearContext()">清屏</button>
+    <button onclick="closeContext()">关闭</button>
 </div>
 <script>
     var ws = new WebSocket("ws://127.0.0.1:8080/log");
@@ -36,14 +52,18 @@
     };
 
     ws.onmessage = function(evt) {
-        var content = document.getElementsByClassName('content')[0];
+        var outDiv = document.getElementById("outDiv");
+        var innerDiv = document.getElementById("innerDiv");
         var pTag = document.createElement("p");
         if(evt.data.indexOf("ERROR") != -1){
             pTag.setAttribute('class', 'hightLight')
         }
         pTag.innerHTML = evt.data;
         console.log(evt.data);
-        content.appendChild(pTag);
+        innerDiv.appendChild(pTag);
+        setTimeout(function () {
+            outDiv.scrollTop = outDiv.scrollHeight;
+        }, 1000);
     };
     //关闭连接
     ws.onclose = function() {
@@ -51,8 +71,28 @@
     };
     // 清屏日志
     function clearContext() {
-        var content = document.getElementsByClassName('content')[0];
-        content.innerHTML = null;
+        var context = document.getElementsByClassName('log-show-dom')[0];
+        context.innerHTML = null;
+    }
+
+    function move2Top() {
+        var outDiv = document.getElementById("outDiv");
+        outDiv.scrollTop = 0;
+    }
+
+    function move2Buttom() {
+        var outDiv = document.getElementById("outDiv");
+        outDiv.scrollTop = outDiv.scrollHeight
+    }
+
+    function closeContext() {
+        var browserName = navigator.appName;
+        if(browserName == "Netscape"){
+            window.location.href = "about:blank";
+        }else {
+            window.opener = null;
+        }
+        window.close();
     }
 </script>
 </body>
